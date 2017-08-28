@@ -1,0 +1,110 @@
+syntax = "proto3";
+
+package beget.network.v1.ip;
+
+import "google/api/annotations.proto";
+
+
+service IpService {
+
+    rpc getList (GetListRequest) returns (GetListResponse) {
+        option (google.api.http) = {
+			get: "/v1/network/ip"
+		};
+    }
+
+    rpc add (AddRequest) returns (AddResponse) {
+        option (google.api.http) = {
+			post: "/v1/network/ip"
+		};
+    }
+
+    rpc setAutoRenew (SetAutoRenewRequest) returns (SetAutoRenewResponse) {
+        option (google.api.http) = {
+			patch: "/v1/network/ip/renew"
+			body: "*"
+		};
+    }
+
+    rpc delete (DeleteRequest) returns (DeleteResponse) {
+        option (google.api.http) = {
+			delete: "/v1/network/ip/{ip}"
+		};
+    }
+}
+
+message GetListRequest {
+
+}
+
+message GetListResponse {
+    repeated Ip ip = 1;
+}
+
+message AddRequest {
+
+}
+
+message AddResponse {
+
+    oneof result {
+        Ip ip = 1;
+        Error error = 2;
+    }
+
+    enum Error {
+        // Внутренняя ошибка сервера
+        INTERNAL_ERROR = 0;
+
+        // недостаточно денег
+        MONEY_NOT_ENOUGH = 1;
+
+        // нехорошему клиенту запрещено добавлять ip
+        NOT_PERMITTED = 2;
+
+        // закончились адреса
+        RESOURCES_DEPLETED = 3;
+    }
+}
+
+message SetAutoRenewRequest {
+    string ip = 1;
+    bool state = 2;
+}
+
+message SetAutoRenewResponse {
+    oneof result {
+        bool new_state = 1;
+        Error error = 2;
+    }
+    enum Error {
+        // Внутренняя ошибка сервера
+        INTERNAL_ERROR = 0;
+    }
+}
+
+message DeleteRequest {
+    string ip = 1;
+}
+
+message DeleteResponse {
+    oneof result {
+        Ip ip = 1;
+        Error error = 2;
+    }
+    enum Error {
+        // Внутренняя ошибка сервера
+        INTERNAL_ERROR = 0;
+    }
+}
+
+message Ip {
+    string address = 1; // сам адрес
+    string expires_at = 2; // дата по формату w3c
+    double cost = 3; // стоимость услуги в год, руб
+    bool is_auto_renew_enabled = 4; // будет ли продлен через год
+    repeated string fqdn = 5; // список доменов к которому привязан ip
+    bool is_email_transport = 6; // установлен ли ip как транспорт для почты
+}
+
+
