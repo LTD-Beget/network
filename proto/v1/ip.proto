@@ -16,6 +16,7 @@ service IpService {
     rpc add (AddRequest) returns (AddResponse) {
         option (google.api.http) = {
 			post: "/v1/network/ip"
+			body: "*"
 		};
     }
 
@@ -42,7 +43,17 @@ message GetListResponse {
 }
 
 message AddRequest {
+    repeated string fqdn = 1; // список доменов к которому привязан ip
+    bool is_email_transport = 2; // установлен ли ip как транспорт для почты
 
+    oneof outgoing {
+        IPOutgoingSites sites = 3;
+        bool is_global_outgoing_ip = 4; // является ли глобальным исх ip для сайтов
+    }
+
+    message IPOutgoingSites{
+        repeated string site = 1; // список сайтов к которому привязан ip
+    }
 }
 
 message AddResponse {
@@ -105,6 +116,15 @@ message Ip {
     bool is_auto_renew_enabled = 4; // будет ли продлен через год
     repeated string fqdn = 5; // список доменов к которому привязан ip
     bool is_email_transport = 6; // установлен ли ip как транспорт для почты
+
+    oneof outgoing {
+        IPOutgoingSites sites = 7;
+        bool is_global_outgoing_ip = 8; // является ли глобальным исх ip для сайтов
+    }
+
+    message IPOutgoingSites{
+        repeated string site = 1; // список сайтов к которому привязан ip
+    }
 }
 
 
