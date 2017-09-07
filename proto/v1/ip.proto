@@ -43,17 +43,10 @@ message GetListResponse {
 }
 
 message AddRequest {
-    repeated string fqdn = 1; // список доменов к которому привязан ip
-    bool is_email_transport = 2; // установлен ли ip как транспорт для почты
-
-    oneof outgoing {
-        IPOutgoingSites sites = 3;
-        bool is_global_outgoing_ip = 4; // является ли глобальным исх ip для сайтов
-    }
-
-    message IPOutgoingSites{
-        repeated string site = 1; // список сайтов к которому привязан ip
-    }
+    repeated int64 domain_ids = 2;      // список доменов к которому привязан ip
+    repeated int64 site_ids = 3;        // список сайтов к которому привязан ip
+    bool is_email_transport = 4;        // установлен ли ip как транспорт для почты
+    bool is_global_outgoing_ip = 5;     // является ли глобальным исх ip для сайтов
 }
 
 message AddResponse {
@@ -110,21 +103,14 @@ message DeleteResponse {
 }
 
 message Ip {
-    string address = 1; // сам адрес
-    string expires_at = 2; // дата по формату w3c
-    double cost = 3; // стоимость услуги в год, руб
-    bool is_auto_renew_enabled = 4; // будет ли продлен через год
-    repeated string fqdn = 5; // список доменов к которому привязан ip
-    bool is_email_transport = 6; // установлен ли ip как транспорт для почты
-
-    oneof outgoing {
-        IPOutgoingSites sites = 7;
-        bool is_global_outgoing_ip = 8; // является ли глобальным исх ip для сайтов
-    }
-
-    message IPOutgoingSites{
-        repeated string site = 1; // список сайтов к которому привязан ip
-    }
+    string address = 1;             // сам адрес
+    string expires_at = 2;          // дата по формату w3c
+    double cost = 3;                // стоимость услуги в год, руб
+    repeated int64 domain_ids = 4;  // список доменов к которому привязан ip
+    repeated int64 site_ids = 5;    // список сайтов к которому привязан ip
+    bool is_auto_renew_enabled = 6; // будет ли продлен через год
+    bool is_email_transport = 7;    // установлен ли ip как транспорт для почты
+    bool is_global_outgoing_ip = 8; // является ли глобальным исх ip для сайтов
 }
 
 
